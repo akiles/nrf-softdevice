@@ -17,7 +17,8 @@ use defmt::*;
 use nrf_softdevice::ble::{gatt_server, peripheral};
 use nrf_softdevice::{raw, Softdevice};
 
-use embassy::executor::{task, Executor};
+use embassy::executor::Executor;
+use embassy::task;
 use embassy::util::Forever;
 static EXECUTOR: Forever<Executor> = Forever::new();
 

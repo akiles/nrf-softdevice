@@ -54,11 +54,7 @@ impl embassy::traits::flash::Flash for Flash {
     type WriteFuture<'a> = impl Future<Output = Result<(), FlashError>> + 'a;
     type ErasePageFuture<'a> = impl Future<Output = Result<(), FlashError>> + 'a;
 
-    fn read<'a>(
-        self: Pin<&'a mut Self>,
-        address: usize,
-        data: &'a mut [u8],
-    ) -> Self::ReadFuture<'a> {
+    fn read<'a>(&'a mut self, address: usize, data: &'a mut [u8]) -> Self::ReadFuture<'a> {
         async move {
             // Reading is simple since SoC flash is memory-mapped :)
             // TODO check addr/len is in bounds.
@@ -71,7 +67,7 @@ impl embassy::traits::flash::Flash for Flash {
         }
     }
 
-    fn write<'a>(self: Pin<&'a mut Self>, address: usize, data: &'a [u8]) -> Self::WriteFuture<'a> {
+    fn write<'a>(&'a mut self, address: usize, data: &'a [u8]) -> Self::WriteFuture<'a> {
         async move {
             let data_ptr = data.as_ptr();
             let data_len = data.len() as u32;
@@ -102,7 +98,7 @@ impl embassy::traits::flash::Flash for Flash {
         }
     }
 
-    fn erase<'a>(self: Pin<&'a mut Self>, address: usize) -> Self::ErasePageFuture<'a> {
+    fn erase<'a>(&'a mut self, address: usize) -> Self::ErasePageFuture<'a> {
         async move {
             if address % Self::PAGE_SIZE != 0 {
                 return Err(FlashError::AddressMisaligned);

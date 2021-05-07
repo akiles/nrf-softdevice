@@ -11,7 +11,8 @@ use example_common::*;
 
 use cortex_m_rt::entry;
 use defmt::*;
-use embassy::executor::{task, Executor};
+use embassy::executor::Executor;
+use embassy::task;
 use embassy::traits::flash::Flash as _;
 use embassy::util::Forever;
 

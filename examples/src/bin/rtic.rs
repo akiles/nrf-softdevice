@@ -22,7 +22,8 @@ use example_common::*;
 
 use core::mem;
 use defmt::*;
-use embassy::executor::{task, Executor};
+use embassy::executor::Executor;
+use embassy::task;
 use embassy::util::Forever;
 use nrf52840_hal::pac::TIMER1;
 use nrf52840_hal::prelude::*;

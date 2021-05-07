@@ -53,9 +53,9 @@ required-features = ["ble-gatt-server"]
 name = "ble_bas_central"
 required-features = ["ble-gatt-client"]
 
-[[bin]]
-name = "ble_peripheral_onoff"
-required-features = ["ble-gatt-server"]
+#[[bin]]
+#name = "ble_peripheral_onoff"
+#required-features = ["ble-gatt-server"]
 
 [[bin]]
 name = "flash"

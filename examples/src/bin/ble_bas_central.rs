@@ -13,7 +13,8 @@ use core::mem;
 use cortex_m_rt::entry;
 use defmt::info;
 use defmt::*;
-use embassy::executor::{task, Executor};
+use embassy::executor::Executor;
+use embassy::task;
 use embassy::util::Forever;
 
 use nrf_softdevice::ble::{central, gatt_client, Address, AddressType};

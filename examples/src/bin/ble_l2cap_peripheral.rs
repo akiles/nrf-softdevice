@@ -19,7 +19,8 @@ use nrf_softdevice::ble;
 use nrf_softdevice::ble::{l2cap, peripheral};
 use nrf_softdevice::{raw, Softdevice};
 
-use embassy::executor::{task, Executor};
+use embassy::executor::Executor;
+use embassy::task;
 use embassy::util::Forever;
 static EXECUTOR: Forever<Executor> = Forever::new();
 

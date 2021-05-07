@@ -320,6 +320,7 @@ impl<P: Packet> Channel<P> {
             Err(RawError::Resources) => {
                 Err(TxError::TxQueueFull(unsafe { P::from_raw_parts(ptr, len) }))
             }
+            Err(RawError::NotFound) => Err(TxError::Disconnected),
             Err(err) => {
                 warn!("sd_ble_l2cap_ch_tx err {:?}", err);
                 // The SD didn't take ownership of the buffer, so it's on us to free it.
@@ -342,14 +343,21 @@ impl<P: Packet> Channel<P> {
                 }
                 Err(TxError::TxQueueFull(ret_sdu)) => {
                     sdu = ret_sdu;
-                    portal(conn_handle)
-                        .wait_once(|ble_evt| unsafe {
-                            match (*ble_evt).header.evt_id as u32 {
-                                raw::BLE_L2CAP_EVTS_BLE_L2CAP_EVT_CH_TX => (),
-                                _ => unreachable!("Invalid event"),
+                    let ret = portal(conn_handle)
+                        .wait_once(|ble_evt| match unsafe { (*ble_evt).header.evt_id as u32 } {
+                            raw::BLE_L2CAP_EVTS_BLE_L2CAP_EVT_CH_TX => Ok(()),
+                            raw::BLE_GAP_EVTS_BLE_GAP_EVT_DISCONNECTED
+                            | raw::BLE_L2CAP_EVTS_BLE_L2CAP_EVT_CH_RELEASED => {
+                                Err(TxError::Disconnected)
                             }
+                            _ => unreachable!("Invalid event"),
                         })
                         .await;
+
+                    if let Err(e) = ret {
+                        return Err(e);
+                    }
+
                     continue;
                 }
                 Err(e) => {
