@@ -37,6 +37,7 @@ futures = { version = "0.3.5", default-features = false }
 fixed = "1.2.0"
 heapless = "0.7.1"
 alloc-cortex-m = "0.4.0"
+atomic-pool = "0.2.1"
 
 [[bin]]
 name = "ble_bas_peripheral"
