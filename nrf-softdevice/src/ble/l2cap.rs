@@ -400,4 +400,26 @@ impl<P: Packet> Channel<P> {
             })
             .await
     }
+
+    pub async fn disconnect(&self) -> Result<(), RawError> {
+        let conn_handle = unwrap!(self.conn.handle());
+        let ret;
+        unsafe { ret = raw::sd_ble_l2cap_ch_release(conn_handle, self.cid) }
+
+        if let Err(err) = RawError::convert(ret) {
+            warn!("sd_ble_l2cap_ch_release error: {:?}", err);
+            return Err(err);
+        }
+
+        portal(conn_handle)
+            .wait_once(|ble_evt| match unsafe { (*ble_evt).header.evt_id } as u32 {
+                raw::BLE_L2CAP_EVTS_BLE_L2CAP_EVT_CH_RELEASED => {
+                    info!("Channel released event");
+                }
+                _ => unreachable!(),
+            })
+            .await;
+
+        Ok(())
+    }
 }
